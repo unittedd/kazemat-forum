@@ -143,19 +143,17 @@ function addMessageToPage(username, avatar, message, time) {
 }
 
 // Функция загрузки сообщений с сервера
-function loadMessages() {
-    // Запрос сообщений с сервера
-    fetch('https://kazemat-forum.onrender.com/get-messages') // Ваш API для получения сообщений
-        .then(response => response.json())
-        .then(messages => {
-            messages.forEach(({ username, message, created_at, profile_image }) => {
-                const formattedTime = formatDate(created_at); // Форматируем время
-                addMessageToPage(username, profile_image, message, formattedTime);
-            });
-        })
-        .catch(error => console.error("Ошибка загрузки сообщений:", error));
-}
-
+    function loadMessages() {
+        fetch('https://kazemat-forum.onrender.com/get-messages')
+            .then(response => response.json())
+            .then(messages => {
+                messages.forEach(({ username, message, created_at, profile_image }) => {
+                    const formattedTime = formatDate(created_at);
+                    addMessageToPage(username, profile_image, message, formattedTime);
+                });
+            })
+            .catch(error => console.error("Ошибка загрузки сообщений:", error));
+    }
 
         // Загружаем все сообщения при загрузке страницы
         loadMessages();
