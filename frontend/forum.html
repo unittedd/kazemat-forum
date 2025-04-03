@@ -182,10 +182,59 @@
 
     loadSections();
   });
+</script>
 
-  // Остальные функции без изменений
-  function filterSections() { /* ... */ }
-  function sortSections() { /* ... */ }
+    <script>
+// Функция фильтрации разделов
+function filterSections() {
+    const searchInput = document.getElementById('searchInput');
+    const searchTerm = searchInput.value.toLowerCase();
+    const sections = document.querySelectorAll('#forumSections tr');
+    const noResults = document.getElementById('noResultsMessage');
+    let found = false;
+
+    sections.forEach(section => {
+        const sectionName = section.textContent.toLowerCase();
+        if (sectionName.includes(searchTerm)) {
+            section.style.display = '';
+            found = true;
+        } else {
+            section.style.display = 'none';
+        }
+    });
+
+    noResults.style.display = found ? 'none' : 'block';
+}
+
+// Функция сортировки разделов
+function sortSections() {
+    const container = document.getElementById('forumSections');
+    const sections = Array.from(container.querySelectorAll('tr'));
+    
+    sections.sort((a, b) => {
+        const textA = a.textContent.trim().toLowerCase();
+        const textB = b.textContent.trim().toLowerCase();
+        return textA.localeCompare(textB);
+    });
+
+    // Очищаем и добавляем отсортированные элементы
+    container.innerHTML = '';
+    sections.forEach(section => container.appendChild(section));
+}
+
+// Инициализация после загрузки DOM
+document.addEventListener('DOMContentLoaded', () => {
+    // Добавляем обработчик на Enter в поле поиска
+    document.getElementById('searchInput').addEventListener('keyup', function(e) {
+        if (e.key === 'Enter') filterSections();
+    });
+
+    // Инициализация кнопок
+    document.querySelector('.search-container button').addEventListener('click', filterSections);
+    document.querySelector('.sort-button').addEventListener('click', sortSections);
+
+    loadSections();
+});
 </script>
 
 <style>
