@@ -6,11 +6,13 @@ const app = express();
 
 const PORT = process.env.PORT || 3000;
 
-// Исправлено: Правильное подключение к PostgreSQL
+//Подключение к PostgreSQL
+const connectionString = 'postgres://neondb_owner:npg_Bs3EYWtoOym1@ep-autumn-sun-a2e55twh-pooler.eu-central-1.aws.neon.tech/kazemat-forum';
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL || 'postgres://user:pass@host/dbname',
-  ssl: { 
-    rejectUnauthorized: false
+  connectionString: connectionString,
+  ssl: {
+    rejectUnauthorized: false,
+    require: true
   }
 });
 
