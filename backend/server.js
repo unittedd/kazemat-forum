@@ -8,7 +8,7 @@ const app = express();
 
 const PORT = process.env.PORT || 3000;
 
-// Настройка подключения к PostgreSQL
+// Настройка подключения к PostgreSQL (используем pool вместо db)
 const pool = new Pool({
   host: process.env.PGHOST,
   user: process.env.PGUSER,
@@ -16,57 +16,48 @@ const pool = new Pool({
   database: process.env.PGDATABASE,
   port: 5432,
   ssl: { 
-    rejectUnauthorized: false // Обязательно для Neon.tech!
+    rejectUnauthorized: false
   }
 });
 
-// Middleware
+// Middleware (убрали дублирование)
 app.use(cors());
 app.use(express.json());
+app.use(express.static(path.join(__dirname, '../frontend')));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Проверка подключения к БД
-pool.connect()
-  .then(() => console.log('Connected to PostgreSQL'))
-  .catch(err => console.error('Connection error:', err));
-
+// Все запросы к БД через pool (заменили db на pool)
 app.post("/login", (req, res) => {
     const { login, password } = req.body;
-    const sql = "SELECT id, login, username, role_id, profile_image FROM users WHERE login = ? AND password = ?";
+    // Исправлен SQL для PostgreSQL ($1 вместо ?)
+    const sql = "SELECT id, login, username, role_id, profile_image FROM users WHERE login = $1 AND password = $2";
     
-    db.query(sql, [login, password], (err, result) => {
+    pool.query(sql, [login, password], (err, result) => {
         if (err) {
             return res.status(500).json({ error: "Ошибка сервера" });
         }
-        if (result.length > 0) {
-            res.json({ success: true, user: result[0] });
+        if (result.rows.length > 0) {
+            res.json({ success: true, user: result.rows[0] });
         } else {
             res.json({ success: false, message: "Неверный логин или пароль" });
         }
     });
 });
 
-
-// Статическая обработка файлов из папки frontend
-app.use(express.static(path.join(__dirname, '../frontend')));
-
-
 // API для получения пользователей
 app.get('/api/users', (req, res) => {
-  db.query('SELECT * FROM users', (err, results) => {
+  pool.query('SELECT * FROM users', (err, results) => {
     if (err) {
       console.error('Ошибка запроса к базе данных: ', err);
       return res.status(500).json({ error: 'Ошибка базы данных' });
     }
-    res.json(results);
+    res.json(results.rows);
   });
 });
 
-
-
 app.delete('/api/users/:id', (req, res) => {
   const userId = req.params.id;
-  // Логика удаления пользователя из базы данных
-  db.query('DELETE FROM users WHERE id = ?', [userId], (err, result) => {
+  pool.query('DELETE FROM users WHERE id = $1', [userId], (err, result) => {
       if (err) {
           res.status(500).send('Ошибка при удалении пользователя');
       } else {
@@ -75,34 +66,29 @@ app.delete('/api/users/:id', (req, res) => {
   });
 });
 
-
-
 // Маршрут для получения секций
 app.get('/api/sections', (req, res) => {
-  db.query('SELECT * FROM sections', (err, results) => {
+  pool.query('SELECT * FROM sections', (err, results) => {
     if (err) {
       console.error('Ошибка выполнения запроса:', err);
       res.status(500).send('Ошибка сервера');
       return;
     }
-    res.json(results);
+    res.json(results.rows);
   });
 });
 
-
-// **Маршрут для получения сообщений**
+// Объединенные маршруты для сообщений
 app.get('/messages', (req, res) => {
-  db.query('SELECT * FROM messages ORDER BY created_at ASC', (err, results) => {
+  pool.query('SELECT * FROM messages ORDER BY created_at ASC', (err, results) => {
       if (err) {
           console.error('Ошибка при получении сообщений:', err);
-          res.status(500).send('Ошибка сервера');
-          return;
+          return res.status(500).send('Ошибка сервера');
       }
-      res.json(results);
+      res.json(results.rows);
   });
 });
 
-// **Маршрут для сохранения сообщения**
 app.post('/send-message', (req, res) => {
   const { username, message, profile_image } = req.body;
 
@@ -110,48 +96,24 @@ app.post('/send-message', (req, res) => {
       return res.status(400).json({ error: 'Заполните все поля' });
   }
 
-  const sql = 'INSERT INTO messages (username, message, profile_image) VALUES (?, ?, ?)';
-  db.query(sql, [username, message, profile_image || 'default-avatar.png'], (err, result) => {
+  // Исправлен SQL для PostgreSQL
+  const sql = `INSERT INTO messages (username, message, profile_image, created_at) 
+              VALUES ($1, $2, $3, NOW())`;
+  
+  pool.query(sql, 
+    [username, message, profile_image || 'default-avatar.png'], 
+    (err, result) => {
       if (err) {
           console.error('Ошибка при сохранении сообщения:', err);
-          res.status(500).send('Ошибка сервера');
-          return;
+          return res.status(500).send('Ошибка сервера');
       }
       res.status(201).json({ success: true });
   });
 });
 
-
-app.get('/get-messages', (req, res) => {
-  const query = 'SELECT * FROM messages ORDER BY created_at ASC';
-  db.query(query, (err, results) => {
-      if (err) {
-          console.error("Ошибка запроса:", err);
-          return res.status(500).send("Ошибка запроса к базе данных");
-      }
-      res.json(results); // Отправляем результаты запроса
-  });
-});
-
-
-// API для получения всех сообщений
-app.get('/get-messages', (req, res) => {
-  const query = 'SELECT * FROM messages ORDER BY created_at DESC';
-  db.query(query, (err, results) => {
-      if (err) {
-          console.error('Ошибка при получении сообщений:', err);
-          return res.status(500).send('Ошибка сервера');
-      }
-      res.json(results); // Отправляем результаты в формате JSON
-  });
-});
-
-// Удаление сообщения по ID
 app.delete('/delete-message/:id', (req, res) => {
   const messageId = req.params.id;
-  const query = 'DELETE FROM messages WHERE id = ?';
-
-  db.execute(query, [messageId], (err, results) => {
+  pool.query('DELETE FROM messages WHERE id = $1', [messageId], (err, results) => {
     if (err) {
       return res.status(500).send('Ошибка сервера');
     }
@@ -159,11 +121,7 @@ app.delete('/delete-message/:id', (req, res) => {
   });
 });
 
-// Middleware
-app.use(cors());
-app.use(bodyParser.json());
-
-// Эндпоинт для обработки формы обратной связи
+// Обратная связь
 app.post("/feedback", (req, res) => {
     const { name, email, message } = req.body;
 
@@ -171,8 +129,9 @@ app.post("/feedback", (req, res) => {
         return res.status(400).json({ message: "Заполните все поля" });
     }
 
-    const sql = "INSERT INTO feedback (name, email, message) VALUES (?, ?, ?)";
-    db.query(sql, [name, email, message], (err, result) => {
+    const sql = `INSERT INTO feedback (name, email, message, created_at) 
+                VALUES ($1, $2, $3, NOW())`;
+    pool.query(sql, [name, email, message], (err, result) => {
         if (err) {
             console.error("Ошибка сохранения в БД:", err);
             return res.status(500).json({ message: "Ошибка сервера" });
@@ -181,12 +140,9 @@ app.post("/feedback", (req, res) => {
     });
 });
 
-// Настройка для обслуживания статических файлов (папка uploads)
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
-
-app.listen(3000, () => {
-    console.log("Сервер запущен на порту 3000");
+// Запуск сервера
+app.listen(PORT, () => {
+    console.log(`Сервер запущен на порту ${PORT}`);
 });
 
 module.exports = app;
