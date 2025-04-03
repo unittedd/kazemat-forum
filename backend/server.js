@@ -6,13 +6,18 @@ const app = express();
 
 const PORT = process.env.PORT || 3000;
 
-// 1. Исправлено подключение к PostgreSQL
+// Настройка подключения к PostgreSQL
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
+  host: process.env.PGHOST,
+  user: process.env.PGUSER,
+  password: process.env.PGPASSWORD,
+  database: process.env.PGDATABASE,
+  port: 5432,
   ssl: { 
-    rejectUnauthorized: false
+    rejectUnauthorized: false // Обязательно для Neon.tech!
   }
 });
+
 
 // 2. Middleware (убрано дублирование)
 app.use(cors());
