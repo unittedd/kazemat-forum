@@ -113,7 +113,7 @@ app.post('/send-message', (req, res) => {
 });
 
 app.get('/get-messages', (req, res) => {
-  pool.query('SELECT * FROM messages ORDER BY created_at DESC', (err, results) => {
+  pool.query('SELECT * FROM messages ORDER BY created_at ASC', (err, results) => {
     if (err) {
       console.error('Ошибка при получении сообщений:', err);
       return res.status(500).send('Ошибка сервера');
