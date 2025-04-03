@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Каземат - Спорт и турниры</title>
+    <title>Каземат - Автомобили и механика</title>
     <link rel="stylesheet" href="css/item.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
@@ -99,7 +99,7 @@ function sendMessage() {
     addMessageToPage(user.username, user.profile_image, messageText, currentTime);
 
     // **2. Затем отправляем сообщение на сервер для сохранения в базе данных**
-    fetch('http://localhost:3000/send-message', {
+    fetch('https://kazemat-forum.onrender.com/send-message', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -127,7 +127,7 @@ function addMessageToPage(username, avatar, message, time) {
 
     messageElement.innerHTML = `
         <div class="avatar-container">
-            <img src="http://localhost:3000/${avatar}" alt="Avatar">
+            <img src="https://kazemat-forum.onrender.com/${avatar}" alt="Avatar">
             <p class="username">${username}</p>
         </div>
         <div class="content">
@@ -145,7 +145,7 @@ function addMessageToPage(username, avatar, message, time) {
 // Функция загрузки сообщений с сервера
 function loadMessages() {
     // Запрос сообщений с сервера
-    fetch('http://localhost:3000/get-messages') // Ваш API для получения сообщений
+    fetch('https://kazemat-forum.onrender.com/get-messages') // Ваш API для получения сообщений
         .then(response => response.json())
         .then(messages => {
             messages.forEach(({ username, message, created_at, profile_image }) => {
