@@ -1,29 +1,33 @@
-const express = require("express");
-const mysql = require("mysql2");
-const cors = require("cors");
-const fs = require('fs'); // Добавили импорт модуля fs
-const bodyParser = require("body-parser");
+const express = require('express');
+const { Pool } = require('pg');
+const cors = require('cors');
+const multer = require('multer');
 const path = require('path');
-
-
+const fs = require('fs');
 const app = express();
+
+const PORT = process.env.PORT || 3000;
+
+// Настройка подключения к PostgreSQL
+const pool = new Pool({
+  host: process.env.PGHOST,
+  user: process.env.PGUSER,
+  password: process.env.PGPASSWORD,
+  database: process.env.PGDATABASE,
+  port: 5432,
+  ssl: { 
+    rejectUnauthorized: false // Обязательно для Neon.tech!
+  }
+});
+
+// Middleware
 app.use(cors());
-app.use(bodyParser.json());
+app.use(express.json());
 
-const db = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "@Hasbik1609D",
-    database: "kazemat_forum"
-});
-
-db.connect(err => {
-    if (err) {
-        console.error("Ошибка подключения к БД:", err);
-    } else {
-        console.log("Подключено к MySQL");
-    }
-});
+// Проверка подключения к БД
+pool.connect()
+  .then(() => console.log('Connected to PostgreSQL'))
+  .catch(err => console.error('Connection error:', err));
 
 app.post("/login", (req, res) => {
     const { login, password } = req.body;
