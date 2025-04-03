@@ -1,5 +1,4 @@
-
-    document.addEventListener("DOMContentLoaded", function () {
+ document.addEventListener("DOMContentLoaded", function () {
       // Получаем объект пользователя из sessionStorage
       const user = JSON.parse(sessionStorage.getItem("currentUser"));
 
@@ -61,4 +60,3 @@
           document.getElementById("feedbackResponse").textContent = "Ошибка отправки формы";
       }
   });
-  
