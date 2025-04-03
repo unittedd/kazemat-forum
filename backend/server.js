@@ -41,6 +41,20 @@ app.post("/login", (req, res) => {
     });
 });
 
+// server.js
+app.get('/api/sections', async (req, res) => {
+  try {
+    const { rows } = await pool.query('SELECT * FROM sections');
+    res.json(rows);
+  } catch (err) {
+    console.error('Ошибка получения секций:', err);
+    res.status(500).json({ 
+      error: 'Не удалось получить список разделов',
+      details: process.env.NODE_ENV === 'development' ? err.message : null
+    });
+  }
+});
+
 // 6. Унифицированные API endpoints
 app.route('/api/messages')
   .get((req, res) => {
