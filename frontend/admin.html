@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Панель Администратора</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- Закрепленный хэдер с меню -->
+  <header>
+    <img src="logo.svg" alt="Логотип" class="logo">
+    <div class="menu">
+      <a href="index.html">Главная</a>
+      <a href="forum.html">Форум</a>
+      <!-- Ссылка на админ-панель, скрыта по умолчанию -->
+      <a href="admin.html" id="admin-panel-link" class="menu-link" style="color: #4DFFEA">Admin</a>
+
+      <div class="right-menu">
+        <a href="profile.html" class="profile-btn">Профиль</a>
+        <a href="login.html" class="logout" onclick="logout()">Выйти <img src="icons/arrow.svg" class="logout-icon"></a>
+      </div>
+    </div>
+  </header>
+
+
+  <div class="container">
+    <h1>Список пользователей</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Логин</th>
+                <th>Имя пользователя</th>
+                <th>Роль</th>
+                <th>Дата регистрации</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody id="userTableBody">
+            <!-- Здесь будут выводиться пользователи -->
+        </tbody>
+    </table>
+
+<!-- Кнопка выгрузки в Word -->
+<button id="exportToWord" onclick="exportToWord()" style="margin-top: 24px; border-radius: 6px; padding: 10px 16px; background-color: #4DFFEA; color: #222; border: none; cursor: pointer;">
+    Выгрузить в Word
+</button>
+
+</div>
+
+  <!-- Подвал -->
+  <footer>
+    <div class="footer-container">
+      <img src="logo.svg" alt="Логотип" class="logo">
+      <a href="privacy.html" class="privacy-policy">Политика конфиденциальности</a>
+    </div>
+  </footer>
+
+  <script>
+    // Функция для форматирования даты в формат DD.MM.YYYY
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+        return `${day}.${month}.${year}`;
+    }
+
+    // Функция для удаления пользователя
+    function deleteUser(userId) {
+        fetch(`http://localhost:3000/api/users/${userId}`, {
+            method: 'DELETE', // Используем DELETE запрос для удаления
+        })
+        .then(response => {
+            if (response.ok) {
+                // Если удаление прошло успешно, удаляем строку из таблицы
+                const row = document.getElementById(`user-${userId}`);
+                row.remove();
+            } else {
+                console.error('Ошибка при удалении пользователя');
+            }
+        })
+        .catch(error => console.error('Ошибка при удалении пользователя:', error));
+    }
+
+    // Получаем данные пользователей через API
+    fetch('http://localhost:3000/api/users')
+        .then(response => response.json())
+        .then(users => {
+            const tableBody = document.getElementById('userTableBody');
+            users.forEach(user => {
+                // Проверка, чтобы не показывать пользователей с ролью 1
+                if (user.role_id !== 1) {
+                    const row = document.createElement('tr');
+                    row.id = `user-${user.id}`; // Добавляем ID строки для идентификации
+
+                    row.innerHTML = `
+                        <td>${user.login}</td>
+                        <td>${user.username}</td>
+                        <td>${user.role_id}</td>
+                        <td>${formatDate(user.created_at)}</td>
+                        <td><button class="delete-btn" onclick="deleteUser(${user.id})">Удалить</button></td>
+                    `;
+                    tableBody.appendChild(row);
+                }
+            });
+        })
+        .catch(error => console.error('Ошибка при получении данных:', error));
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+
+<script>
+    function exportToWord() {
+        const table = document.querySelector("table");
+        const rows = table.querySelectorAll("tr");
+
+        // Создаем новый HTML для таблицы без столбца "Действия"
+        let tableHTML = "<table>";
+
+        rows.forEach((row, index) => {
+            // Пропускаем строку заголовка и исключаем столбец "Действия"
+            if (index === 0) {
+                // Удаляем ячейку с заголовком "Действия"
+                tableHTML += "<tr>" + row.innerHTML.replace(/<th>Действия<\/th>/, "") + "</tr>";
+            } else {
+                // Удаляем последнюю ячейку в строке (кнопку "Удалить")
+                let newRow = row.innerHTML.split("<td>"); // Разбиваем по ячейкам
+                newRow = newRow.slice(0, 5); // Сохраняем только первые 4 ячейки
+                newRow = newRow.join("<td>"); // Собираем обратно в строку
+
+                tableHTML += "<tr>" + newRow + "</tr>";
+            }
+        });
+
+        tableHTML += "</table>";
+
+        // Добавляем стили для улучшения внешнего вида таблицы в Word
+        tableHTML = `
+            <html xmlns:w="urn:schemas-microsoft-com:office:word">
+            <head>
+                <meta charset="UTF-8">
+                <style>
+                    table {border-collapse: collapse; width: 100%;}
+                    th, td {border: 1px solid #000; padding: 8px; text-align: left;}
+                    th {background-color: #f2f2f2;}
+                </style>
+            </head>
+            <body>
+                <table>${tableHTML}</table>
+            </body>
+            </html>
+        `;
+
+        // Преобразуем таблицу в Blob
+        const blob = new Blob([tableHTML], { type: "application/msword" });
+
+        // Сохраняем файл с помощью FileSaver
+        saveAs(blob, "users.doc");
+    }
+</script>
+
+
+
+
+
+</body>
+</html>

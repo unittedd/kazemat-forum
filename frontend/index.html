@@ -1,1 +1,254 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Форум Каземат</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
 
+        .rules-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 32px;
+        }
+    
+        .rule {
+            background-color: #4DFFEA;
+            border: 1px solid #1F1F1F;
+            border-radius: 12px;
+            padding: 24px;
+            width: 44%;
+            text-align: left;
+        }
+  
+        .rule strong {
+            font-size: 18px;
+            color: #1F1F1F;
+            margin-bottom: 6px;
+            font-weight: bold;
+        }
+    
+        .rule p {
+            font-size: 14px;
+            color: #1F1F1F;
+            margin-top: 24px;
+            line-height: 1.5;
+        }
+  
+        .rules-image {
+            width: 100%;
+            height: auto;
+            border-radius: 6px;
+            margin-bottom: 42px;
+        }
+  
+        p {
+            margin-top: 32px;
+            font-size: 18px;
+            color: #BABABA;
+        }
+  
+        .footer-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2px 8px;
+        }
+  
+        .privacy-policy {
+            margin-left: 24px;
+        }
+  
+        /* Стиль для нового блока с информацией */
+        .info-container {
+            margin-top: 40px;
+            background-color: #f4f4f4;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            padding: 24px;
+        }
+  
+        .info-container h2 {
+            font-size: 24px;
+            color: #1F1F1F;
+        }
+  
+        .info-container p {
+            font-size: 16px;
+            color: #555;
+        }
+  
+        .contact-info {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #777;
+        }
+  
+      </style>
+</head>
+<body>
+
+    <header>
+        <img src="logo.svg" alt="Логотип" class="logo">
+        <div class="menu">
+          <a href="index.html" style="color: #4DFFEA">Главная</a>
+          <a href="forum.html">Форум</a>
+          <!-- Ссылка на админ-панель, скрыта по умолчанию -->
+          <a href="admin.html" id="admin-panel-link" class="menu-link" style="display: none;">Admin</a>
+          <!-- Ссылка на панель модератора, скрыта по умолчанию -->
+          <a href="moderator.html" id="moderator-panel-link" class="menu-link" style="display: none;">Moderator</a>
+    
+          <div class="right-menu">
+            <a href="profile.html" class="profile-btn">Профиль</a>
+            <a href="login.html" class="logout" onclick="logout()">Выйти <img src="icons/arrow.svg" class="logout-icon"></a>
+          </div>
+        </div>
+      </header>
+
+
+<div class="container">
+
+  <!-- Добавленное изображение -->
+  <img src="index.png" alt="Изображение для форума" class="rules-image">
+
+  <h1>Правила поведения на форуме</h1>
+  <p style="color: #BABABA">Чтобы поддерживать приятную атмосферу, ознакомьтесь с нашими правилами:</p>
+  
+
+  <div class="rules-container">
+      <div class="rule">
+          <strong>Уважайте других участников данного форума</strong>
+          <p>Оскорбления, агрессия и личные нападки на других пользователей запрещены</p>
+      </div>
+
+      <div class="rule">
+          <strong>Не публикуйте запрещенные материалы</strong>
+          <p>Не размещайте рекламные материалы, ненужные ссылки или спам</p>
+      </div>
+
+      <div class="rule">
+          <strong>Используйте соответствующие темы</strong>
+          <p>Пожалуйста, публикуйте сообщения в правильных разделах форума</p>
+      </div>
+
+      <div class="rule">
+          <strong>Не размещайте личную информацию</strong>
+          <p>Разглашение личных данных без согласия человека запрещено</p>
+      </div>
+  </div>
+</div>
+
+<div class="info-container">
+    <div class="form-wrapper">
+        <h2>Обратная связь</h2>
+        <p>Оставьте ваше сообщение, и мы свяжемся с вами<br> в ближайшее время</p>
+
+        <form id="feedbackForm">
+            <label for="name">Введите имя:</label>
+            <input type="text" id="name" name="name" required>
+
+            <label for="email">Введите email:</label>
+            <input type="email" id="email" name="email" required>
+
+            <label for="message">Введите сообщение:</label>
+            <textarea id="message" name="message" required></textarea>
+
+            <button type="submit">Отправить</button>
+        </form>
+
+        <p id="feedbackResponse"></p>
+    </div>
+</div>
+
+
+<style>
+/* Центрируем форму на странице */
+.info-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 60vh; /* Обеспечиваем, чтобы контейнер занимал всю высоту экрана */
+    background: none;
+    border: none;
+    color: #f4f4f4; /* Все тексты в контейнере будут белыми */
+}
+
+/* Центрируем форму на странице */
+.info-container p {
+    line-height: 1.5;
+    color: #f4f4f4; /* Все тексты в контейнере будут белыми */
+}
+
+/* Центрируем форму на странице */
+.info-container h2 {
+    color: #4DFFEA; /* Все тексты в контейнере будут белыми */
+}
+
+/* Обертка формы */
+.form-wrapper {
+    width: 100%; /* Убираем фиксированную ширину */
+    max-width: 420px; /* Устанавливаем максимальную ширину */
+    text-align: center;
+    padding: 0 20px; /* Добавляем немного отступов */
+}
+
+/* Форма */
+.info-container form {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 420px; /* Используем всю доступную ширину в пределах max-width */
+    border: none; /* Убираем обводку формы */
+}
+
+/* Выравнивание текста меток по левому краю */
+.info-container label {
+    text-align: left; /* Выровнять текст по левому краю */
+    margin-bottom: 4px; /* Добавляем небольшой отступ для разделения текста и поля */
+}
+
+/* Поля ввода и кнопка */
+.info-container input, 
+.info-container textarea, 
+.info-container button {
+    width: 396px; /* Ширина по всей доступной области */
+    padding: 12px;
+    border: 1px solid #4DFFEA; /* Можно оставить, если хочешь видеть легкую обводку полей */
+    border-radius: 6px;
+    font-size: 16px;
+    color: #f4f4f4; /* Текст в полях ввода и textarea будет белым */
+    background-color: #333; /* Фон полей темный для контраста */
+}
+
+/* Кнопка */
+.info-container button {
+    margin-top: 12px;
+    width: 420px; /* Ширина по всей доступной области */
+    background-color: #4DFFEA;
+    border: none;
+    cursor: pointer;
+    transition: 0.3s;
+    color: #1f1f1f; /* Цвет текста на кнопке */
+}
+
+.info-container button:hover {
+    background-color: #3AD6C4;
+}
+
+</style>
+
+
+<footer>
+  <div class="footer-container">
+      <img src="logo.svg" alt="Логотип" class="logo">
+      <a href="privacy.html" class="privacy-policy">Политика конфиденциальности</a>
+  </div>
+</footer>
+
+<script src="script.js"></script>
+
+
+</body>
+</html>

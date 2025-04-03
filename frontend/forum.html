@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Форум Каземат</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        /* Стили для заголовка таблицы */
+        .forum-table th {
+            background-color: #4DFFEA; /* Бирюзовая заливка */
+            color: #1F1F1F; /* Темно-серый цвет текста */
+            text-align: left; /* Выравнивание текста по левому краю */
+            padding: 12px; /* Отступы для улучшения внешнего вида */
+        }
+
+        /* Стили для поля поиска */
+        .search-container {
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        .search-container input {
+            padding: 12px;
+            font-size: 16px;
+            width: 870px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            background-color: transparent;  /* Убираем белую заливку */
+            color: white;  /* Цвет текста белый */
+        }
+
+        .search-container button {
+            padding: 12px 24px;
+            font-size: 16px;
+            background-color: #4DFFEA;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .search-container button:hover {
+            background-color: #36c4c1;
+        }
+
+        /* Стиль для сообщения о том, что ничего не найдено */
+        .no-results {
+            color: #BABABA;
+            font-size: 18px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        /* Стиль для кнопки сортировки */
+        .sort-button {
+            margin-top: 20px;
+            padding: 12px 24px;
+            font-size: 16px;
+            background-color: #4DFFEA;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .sort-button:hover {
+            background-color: #36c4c1;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <img src="logo.svg" alt="Логотип" class="logo">
+        <div class="menu">
+            <a href="index.html">Главная</a>
+            <a href="forum.html" style="color: #4DFFEA">Форум</a>
+            <!-- Ссылка на админ-панель, скрыта по умолчанию -->
+            <a href="admin.html" id="admin-panel-link" class="menu-link" style="display: none;">Admin</a>
+            <!-- Ссылка на панель модератора, скрыта по умолчанию -->
+            <a href="moderator.html" id="moderator-panel-link" class="menu-link" style="display: none;">Moderator</a>
+        
+            <div class="right-menu">
+                <a href="profile.html" class="profile-btn">Профиль</a>
+                <a href="login.html" class="logout" onclick="logout()">Выйти <img src="icons/arrow.svg" class="logout-icon"></a>
+            </div>
+        </div>
+    </header>
+
+<div class="container">
+    <h1>Темы форума</h1>
+
+    <!-- Поле для поиска -->
+    <div class="search-container">
+        <input type="text" id="searchInput" placeholder="Поиск по теме...">
+        <button onclick="filterSections()">Поиск</button>
+    </div>
+
+    <table class="forum-table">
+        <thead>
+            <tr>
+                <th>Название темы</th>
+            </tr>
+        </thead>
+        <tbody id="forumSections">
+            <!-- Здесь будут отображаться ссылки на страницы с темами -->
+        </tbody>
+    </table>
+ 
+
+    <!-- Сообщение о том, что ничего не найдено -->
+    <div id="noResultsMessage" class="no-results" style="display: none;">
+        Ничего не найдено
+    </div>
+
+    <!-- Кнопка для сортировки -->
+ <button class="sort-button" onclick="sortSections()">Сортировать по алфавиту</button>
+</div>
+
+<footer>
+    <div class="footer-container">
+        <img src="logo.svg" alt="Логотип" class="logo">
+        <a href="privacy.html" class="privacy-policy">Политика конфиденциальности</a>
+    </div>
+</footer>
+
+<script>
+  // Функция для загрузки секций с сервера
+  async function loadSections() {
+    try {
+      const response = await fetch('http://localhost:3000/api/sections'); // URL API для получения данных о темах
+      if (!response.ok) {
+        throw new Error('Ошибка при загрузке секций');
+      }
+      const sections = await response.json();
+
+      // Отображаем секции на странице
+      const forumSections = document.getElementById('forumSections');
+      sections.forEach(section => {
+        const li = document.createElement('tr');
+        // Генерация ссылок на страницы с каждой темой (например, item1.html, item2.html)
+        li.innerHTML = `<td><a href="item${section.id}.html">${section.name}</a></td>`;
+        forumSections.appendChild(li);
+      });
+    } catch (error) {
+      console.error('Ошибка при загрузке секций:', error);
+    }
+  }
+
+  // Функция для фильтрации секций по введенному поисковому запросу
+  function filterSections() {
+    const searchInput = document.getElementById('searchInput').value.toLowerCase();
+    const rows = document.querySelectorAll('#forumSections tr');
+    let found = false;  // Флаг для отслеживания наличия результатов
+
+    rows.forEach(row => {
+        const title = row.querySelector('a').textContent.toLowerCase();
+        if (title.includes(searchInput)) {
+            row.style.display = '';  // Показываем строку, если тема совпадает
+            found = true;  // Нашли хотя бы один результат
+        } else {
+            row.style.display = 'none';  // Скрываем строку, если тема не совпадает
+        }
+    });
+
+    // Если результатов не найдено, показываем сообщение
+    const noResultsMessage = document.getElementById('noResultsMessage');
+    if (!found) {
+        noResultsMessage.style.display = 'block';
+    } else {
+        noResultsMessage.style.display = 'none';
+    }
+  }
+
+  // Функция для сортировки секций по алфавиту
+  function sortSections() {
+    const forumSections = document.getElementById('forumSections');
+    const rows = Array.from(forumSections.querySelectorAll('tr'));
+
+    rows.sort((a, b) => {
+      const titleA = a.querySelector('a').textContent.toLowerCase();
+      const titleB = b.querySelector('a').textContent.toLowerCase();
+      return titleA.localeCompare(titleB);
+    });
+
+    // Перерисовываем отсортированные строки
+    rows.forEach(row => forumSections.appendChild(row));
+  }
+
+  // Загружаем секции при загрузке страницы
+  window.onload = loadSections;
+</script>
+
+<script src="script.js"></script>
+
+</body>
+</html>

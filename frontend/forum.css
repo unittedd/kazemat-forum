@@ -1,0 +1,276 @@
+body {
+    background-color: #181818;
+    color: #F5F5F5;
+    font-family: Inter, sans-serif;
+    text-align: center;
+    margin: 0;
+}
+
+/* Новый стиль для хедера */
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #222;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 24px;
+}
+
+/* Логотип */
+.logo {
+    height: 36px;
+}
+
+/* Контейнер для меню */
+.menu {
+    display: flex;
+    align-items: center;
+    gap: 36px;
+    flex-grow: 1;
+    padding-left: 86px;
+}
+
+/* Стили для пунктов меню */
+.menu a {
+    color: #F5F5F5;
+    border-radius: 6px;
+    font-size: 16px;
+    text-decoration: none;
+}
+
+.menu a:hover {
+    color: #CCCCCC;
+}
+
+/* Блок справа: "Профиль" + "Выйти" */
+.user-actions {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+/* Кнопка "Профиль" */
+.profile-btn {
+    color: #F5F5F5;
+    font-size: 16px;
+    text-decoration: none;
+    padding-left: 800px;
+}
+
+
+/* Ссылка "Выйти" */
+.logout {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Расстояние между текстом и иконкой */
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .logout-icon {
+    width: 16px; /* Подстрой размер иконки */
+    height: 16px;
+  }
+
+
+.container {
+    padding: 20px;
+    max-width: 400px;
+    margin: 100px auto 50px auto;
+    background: #222;
+    border-radius: 10px;
+}
+
+.username {
+    font-size: 24px;
+    color: #4DFFEA;
+}
+
+
+.profile-image {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    margin: 15px 0;
+}
+
+/* Подвал */
+footer {
+    bottom: 0;
+    left: 0;
+    background-color: #222;
+    padding: 8px 36px;
+    margin-top: 24px;
+}
+
+.footer-container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+
+}
+
+.privacy-policy {
+    margin-left: 996px;
+    color: #BABABA;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+
+/* Основной контейнер */
+.container {
+    padding: 20px;
+    max-width: 800px;
+    margin: 100px auto 50px auto;
+    background: #222;
+    border-radius: 6px;
+}
+
+h2 {
+    text-align: center;
+    color: #4DFFEA;
+}
+
+/* Список категорий */
+.categories,
+.recent-posts {
+    padding: 10px;
+}
+
+.categories h3,
+.recent-posts h3 {
+    border-bottom: 1px solid #4DFFEA;
+    padding-bottom: 5px;
+}
+
+.categories ul,
+.recent-posts ul {
+    list-style: none;
+    padding: 0;
+}
+
+.categories li,
+.recent-posts li {
+    background: #333;
+    margin: 5px 0;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.categories a,
+.recent-posts a {
+    text-decoration: none;
+    color: #F5F5F5;
+    font-size: 16px;
+    display: block;
+}
+
+.categories a:hover,
+.recent-posts a:hover {
+    color: #4DFFEA;
+}
+
+/* Стилизация строки поиска */
+.search-bar {
+    width: 60%;
+    padding: 10px;
+    margin: 120px auto 20px auto;
+    display: block;
+    font-size: 16px;
+    background: #333;
+    border: 1px solid #4DFFEA;
+    border-radius: 6px;
+    color: #F5F5F5;
+}
+
+.search-bar::placeholder {
+    color: #999;
+}
+
+/* Контейнер форума */
+.forum {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background: #222;
+    border-radius: 10px;
+}
+
+/* Раздел форума */
+.section {
+    background: #333;
+    border-radius: 6px;
+    margin-bottom: 15px;
+    overflow: hidden;
+}
+
+/* Заголовок раздела */
+.section-title {
+    background: #4DFFEA;
+    color: #181818;
+    padding: 12px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.section-title:hover {
+    background: #3AD9C4;
+}
+
+/* Кнопка сворачивания (▼) */
+.toggle {
+    font-size: 16px;
+    transition: transform 0.3s;
+}
+
+/* Скрытый раздел */
+.collapsed .topics {
+    display: none;
+}
+
+.collapsed .toggle {
+    transform: rotate(-90deg);
+}
+
+/* Темы */
+.topics {
+    padding: 10px;
+}
+
+.topic {
+    background: #444;
+    padding: 10px;
+    margin-bottom: 5px;
+    border-radius: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.topic:hover {
+    background: #555;
+}
+
+.topic a {
+    color: #F5F5F5;
+    text-decoration: none;
+    font-size: 16px;
+}
+
+.topic a:hover {
+    color: #4DFFEA;
+}
+
+/* Количество сообщений */
+.messages {
+    font-size: 14px;
+    color: #999;
+}

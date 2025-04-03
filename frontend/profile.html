@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Профиль</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    
+  </style>
+</head>
+
+<body>
+  <!-- Закрепленный хэдер с меню -->
+  <header>
+    <img src="logo.svg" alt="Логотип" class="logo">
+    <div class="menu">
+      <a href="index.html">Главная</a>
+      <a href="forum.html">Форум</a>
+      <!-- Ссылка на админ-панель, скрыта по умолчанию -->
+      <a href="admin.html" id="admin-panel-link" class="menu-link" style="display: none;">Admin</a>
+      <!-- Ссылка на панель модератора, скрыта по умолчанию -->
+      <a href="moderator.html" id="moderator-panel-link" class="menu-link"
+        style="display: none;">Moderator</a>
+
+      <div class="right-menu">
+        <a href="profile.html" class="profile-btn" style="color: #4DFFEA">Профиль</a>
+        <a href="login.html" class="logout" onclick="logout()">Выйти <img src="icons/arrow.svg" class="logout-icon"></a>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <img id="profile-img" class="profile-image" src="" alt="Profile Image">
+    <h3 style="color: #4DFFEA" id="username"></h3>
+    <p><strong>Логин:</strong> <span id="login"></span></p>
+  </div>
+
+  <!-- Подвал -->
+  <footer>
+    <div class="footer-container">
+      <img src="logo.svg" alt="Логотип" class="logo">
+      <a href="privacy.html" class="privacy-policy">Политика конфиденциальности</a>
+    </div>
+  </footer>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      // Получаем объект пользователя из sessionStorage
+      const user = JSON.parse(sessionStorage.getItem("currentUser"));
+
+      // Проверяем, существует ли объект пользователя
+      if (!user) {
+        // Если пользователь не найден, перенаправляем на страницу входа
+        window.location.href = "login.html";
+      } else {
+        // Заполняем данные профиля
+        document.getElementById("username").innerText = user.username;
+        document.getElementById("login").innerText = user.login;
+        document.getElementById("profile-img").src = "http://localhost:3000/" + user.profile_image;
+
+        // Получаем ссылку на админ-панель
+        const adminPanelLink = document.getElementById("admin-panel-link");
+        const moderatorPanelLink = document.getElementById("moderator-panel-link");
+
+        // Если роль пользователя - Администратор (role_id === 1), показываем админ-панель
+        if (user.role_id === 1) {
+          adminPanelLink.style.display = "inline-block";  // Показываем ссылку
+        } else {
+          console.log("Не администратор, скрываем ссылку");
+          adminPanelLink.style.display = "none";  // Скрываем ссылку
+        }
+        if (user.role_id === 2) {
+          moderatorPanelLink.style.display = "inline-block";  // Показываем ссылку на модератор-панель
+        } else {
+          moderatorPanelLink.style.display = "none";  // Скрываем ссылку на модератор-панель
+        }
+
+
+      }
+    });
+
+    function logout() {
+      // Логика выхода пользователя (очистка sessionStorage или cookies)
+      sessionStorage.removeItem("currentUser");
+      window.location.href = "login.html";
+    }
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Каземат - Вход в систему</title>
+    <style>
+        body {
+            font-family: Inter, sans-serif;
+            background-color: #181818; /* Основной фон */
+            color: #F5F5F5; /* Цвет шрифта */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .login-container {
+            width: 350px;
+            padding: 20px;
+            background-color: #222222; /* Чуть светлее основного цвета */
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .login-container h2 {
+            margin-bottom: 20px;
+        }
+
+        .login-container input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #4DFFEA; /* Цвет выделения */
+            background: #181818;
+            color: #F5F5F5;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        .login-container input:focus {
+            outline: none;
+            border-color: #4DFFEA;
+            box-shadow: 0 0 5px #4DFFEA;
+        }
+
+        .login-container button {
+            width: 100%;
+            padding: 12px;
+            background-color: #4DFFEA; /* Цвет активной кнопки */
+            border: none;
+            color: #181818;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .login-container button:hover {
+            background-color: #3cd9c3;
+        }
+
+        .error-message {
+            color: #ff4d4d;
+            margin-top: 10px;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-container">
+        <h2>Вход в систему</h2>
+        <input type="text" id="login" placeholder="Логин" required>
+        <input type="password" id="password" placeholder="Пароль" required>
+        <button onclick="loginUser()">Войти</button>
+        <p class="error-message" id="error-msg">Неверный логин или пароль</p>
+    </div>
+
+
+    <script>
+        async function loginUser() {
+            const login = document.getElementById("login").value;
+            const password = document.getElementById("password").value;
+
+            const response = await fetch("http://localhost:3000/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ login, password })
+            });
+
+            const data = await response.json();
+            
+            if (data.success) {
+                sessionStorage.setItem("currentUser", JSON.stringify(data.user));
+                window.location.href = "profile.html";
+            } else {
+                document.getElementById("error-msg").style.display = "block";
+            }
+        }
+    </script>
+</body>
+</html>
