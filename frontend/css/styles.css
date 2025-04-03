@@ -1,0 +1,320 @@
+body {
+    background-color: #181818;
+    color: #F5F5F5;
+    font-family: Inter, sans-serif;
+    text-align: center;
+    margin: 0;
+}
+
+/* Новый стиль для хедера */
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #222;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 24px;
+}
+
+/* Логотип */
+.logo {
+    height: 36px;
+}
+
+/* Контейнер для меню */
+.menu {
+    display: flex;
+    align-items: center;
+    gap: 36px;
+    flex-grow: 1;
+    padding-left: 86px;
+}
+
+/* Стили для пунктов меню */
+.menu a {
+    color: #F5F5F5;
+    border-radius: 6px;
+    font-size: 16px;
+    text-decoration: none;
+}
+
+.menu a:hover {
+    color: #CCCCCC;
+}
+
+/* Блок справа: "Профиль" + "Выйти" 
+.user-actions {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+*/
+
+
+/* Кнопка "Профиль"
+.profile-btn {
+    color: #F5F5F5;
+    font-size: 16px;
+    text-decoration: none;
+    padding-left: 800px;
+}
+
+
+/* Ссылка "Выйти" */
+.logout {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    /* Расстояние между текстом и иконкой */
+    text-decoration: none;
+    color: inherit;
+}
+
+
+
+/* Правый контейнер для кнопок "Профиль" и "Выйти" */
+.right-menu {
+    display: flex;
+    padding-left: 680px;
+    gap: 42px;
+    /* Расстояние между кнопками 24px */
+}
+
+
+
+.logout-icon {
+    width: 16px;
+    /* Подстрой размер иконки */
+    height: 16px;
+}
+
+
+.container {
+    padding: 20px;
+    max-width: 400px;
+    margin: 100px auto 50px auto;
+    background: #222;
+    border-radius: 10px;
+}
+
+.username {
+    font-size: 24px;
+    color: #4DFFEA;
+}
+
+
+.profile-image {
+    width: 148px; /* Ширина аватара */
+    height: 148px; /* Высота аватара */
+    object-fit: cover; /* Обрезает изображение, чтобы оно заполнило контейнер */
+    border-radius: 50%; /* Закругленные углы для круглой формы */
+    border: 2px solid #4DFFEA; /* Обводка вокруг изображения (цвет и ширина) */
+}
+
+
+/* Подвал */
+footer {
+    bottom: 0;
+    left: 0;
+    background-color: #222;
+    padding: 12px 24px;
+}
+
+.footer-container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.privacy-policy {
+    margin-left: 1040px;
+    color: #BABABA;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+
+/* Основной контейнер */
+.container {
+    padding: 20px;
+    max-width: 800px;
+    margin: 100px auto 50px auto;
+    background: #222;
+    border-radius: 6px;
+}
+
+h2 {
+    text-align: center;
+    color: #4DFFEA;
+}
+
+/* Список категорий */
+.categories,
+.recent-posts {
+    text-align: left;
+}
+
+.categories h3,
+.recent-posts h3 {
+    border-bottom: 1px solid #4DFFEA;
+    padding-bottom: 5px;
+}
+
+
+.categories ul,
+.recent-posts ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+
+.categories li,
+.recent-posts li {
+    background: #333;
+    margin: 5px 0;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.categories a,
+.recent-posts a {
+    text-decoration: none;
+    color: #F5F5F5;
+    font-size: 16px;
+    display: block;
+}
+
+.categories a:hover,
+.recent-posts a:hover {
+    color: #4DFFEA;
+}
+
+
+.profile-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    /* Расстояние между иконкой и текстом */
+}
+
+.profile-icon {
+    width: 20px;
+    /* Размер иконки */
+    height: 20px;
+}
+
+
+
+/* Контейнер для таблицы */
+.container {
+    padding: 20px;
+    max-width: 1000px;
+    margin: 80px auto 50px auto;
+    background: #222;
+    border-radius: 6px;
+}
+
+h1,
+h2 {
+    text-align: center;
+    color: #4DFFEA;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th,
+td {
+    padding: 10px 15px;
+    text-align: left;
+    border: 1px solid #444;
+}
+
+th {
+    background-color: #333;
+    color: #F5F5F5;
+}
+
+tbody tr:nth-child(even) {
+    background-color: #333;
+}
+
+tbody tr:hover {
+    background-color: #4DFFEA;
+}
+
+/* Стили для кнопки удаления */
+.delete-btn {
+    background-color: #ff4d4d;
+    /* Красный цвет фона */
+    color: white;
+    /* Белый цвет текста */
+    border: none;
+    /* Без рамки */
+    padding: 5px 10px;
+    /* Отступы внутри кнопки */
+    cursor: pointer;
+    /* Указатель мыши при наведении */
+    border-radius: 4px;
+    /* Закругленные углы */
+    transition: background-color 0.3s ease;
+    /* Плавное изменение фона */
+}
+
+.delete-btn:hover {
+    background-color: #ff1a1a;
+    /* Темный красный при наведении */
+}
+
+.delete-btn:active {
+    background-color: #e60000;
+    /* Еще более темный красный при клике */
+}
+
+/* Стили для таблицы с темами форума */
+.forum-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.forum-table th,
+.forum-table td {
+    padding: 10px 15px;
+    text-align: left;
+    border: 1px solid #444;
+}
+
+.forum-table th {
+    background-color: #333;
+    color: #F5F5F5;
+}
+
+.forum-table td {
+    background-color: #222;
+    color: #F5F5F5;
+}
+
+.forum-table tbody tr:nth-child(even) {
+    background-color: #333;
+}
+
+.forum-table tbody tr:hover {
+    background-color: #4DFFEA;
+    cursor: pointer;
+}
+
+.forum-table tbody tr td a {
+    color: #F5F5F5;
+    text-decoration: none;
+}
+
+.forum-table tbody tr td a:hover {
+    color: #4DFFEA;
+}
