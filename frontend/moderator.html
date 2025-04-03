@@ -276,7 +276,7 @@
     <script>
         // Функция для загрузки сообщений
         function loadMessages() {
-            fetch('http://localhost:3000/get-messages')
+            fetch('https://kazemat-forum.onrender.com/get-messages')
                 .then(response => response.json())
                 .then(messages => {
                     const messagesList = document.getElementById('messagesList');
@@ -288,7 +288,7 @@
 
                         const avatar = document.createElement('img');
                         avatar.classList.add('profile-img');
-                        avatar.src = `http://localhost:3000/${profile_image}`;
+                        avatar.src = `https://kazemat-forum.onrender.com/${profile_image}`;
 
                         messageElement.innerHTML = `
                             <div class="message-header">
@@ -318,7 +318,7 @@
         }
 
         function deleteMessage(messageId) {
-    fetch(`http://localhost:3000/delete-message/${messageId}`, {
+    fetch(`https://kazemat-forum.onrender.com/delete-message/${messageId}`, {
         method: 'DELETE',
     })
     .then(response => {
