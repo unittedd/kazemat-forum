@@ -151,8 +151,9 @@ app.post("/feedback", (req, res) => {
 });
 
 // Запуск сервера
-app.listen(3000, () => {
-  console.log("Сервер запущен на порту 3000");
+const port = process.env.PORT || 3000; // Исправлено здесь
+app.listen(port, () => {
+  console.log(`Сервер запущен на порту ${port}`); // Исправлено здесь
 });
 
 module.exports = app;
