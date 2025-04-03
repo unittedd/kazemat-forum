@@ -45,7 +45,7 @@
       };
   
       try {
-          const response = await fetch("http://localhost:3000/feedback", {
+          const response = await fetch("https://kazemat-forum.onrender.com/feedback", {
               method: "POST",
               headers: {
                   "Content-Type": "application/json"
