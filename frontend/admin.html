@@ -69,7 +69,7 @@
 
     // Функция для удаления пользователя
     function deleteUser(userId) {
-        fetch(`http://localhost:3000/api/users/${userId}`, {
+        fetch(`https://kazemat-forum.onrender.com/api/users/${userId}`, {
             method: 'DELETE', // Используем DELETE запрос для удаления
         })
         .then(response => {
@@ -85,7 +85,7 @@
     }
 
     // Получаем данные пользователей через API
-    fetch('http://localhost:3000/api/users')
+    fetch('https://kazemat-forum.onrender.com/api/users')
         .then(response => response.json())
         .then(users => {
             const tableBody = document.getElementById('userTableBody');
