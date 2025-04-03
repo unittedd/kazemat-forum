@@ -99,7 +99,7 @@ function sendMessage() {
     addMessageToPage(user.username, user.profile_image, messageText, currentTime);
 
     // **2. Затем отправляем сообщение на сервер для сохранения в базе данных**
-    fetch('https://kazemat-forum.onrender.com/send-message', {
+    fetch('http://localhost:3000/send-message', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -127,7 +127,7 @@ function addMessageToPage(username, avatar, message, time) {
 
     messageElement.innerHTML = `
         <div class="avatar-container">
-            <img src="https://kazemat-forum.onrender.com/${avatar}" alt="Avatar">
+            <img src="http://localhost:3000/${avatar}" alt="Avatar">
             <p class="username">${username}</p>
         </div>
         <div class="content">
@@ -145,7 +145,7 @@ function addMessageToPage(username, avatar, message, time) {
 // Функция загрузки сообщений с сервера
 function loadMessages() {
     // Запрос сообщений с сервера
-    fetch('https://kazemat-forum.onrender.com/get-messages') // Ваш API для получения сообщений
+    fetch('http://localhost:3000/get-messages') // Ваш API для получения сообщений
         .then(response => response.json())
         .then(messages => {
             messages.forEach(({ username, message, created_at, profile_image }) => {

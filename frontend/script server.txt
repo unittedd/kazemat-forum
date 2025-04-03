@@ -1,0 +1,177 @@
+const express = require("express");
+const mysql = require("mysql2");
+const bodyParser = require("body-parser");
+const path = require("path");
+
+const app = express();
+const PORT = 3000;
+
+// Указываем, что папка "frontend" содержит статические файлы
+app.use(express.static(path.join(__dirname, "../frontend")));
+
+
+
+// Подключение к базе данных
+const db = mysql.createConnection({
+  host: "localhost",
+  user: "root", // Укажи свой логин от MySQL
+  password: "@Hasbik1609D", // Укажи свой пароль от MySQL
+  database: "kazemat_forum",
+});
+
+db.connect((err) => {
+  if (err) {
+    console.error("Ошибка подключения к БД:", err);
+  } else {
+    console.log("Подключено к MySQL");
+  }
+});
+
+app.use(bodyParser.urlencoded({ extended: true }));
+
+
+const session = require('express-session');
+
+app.use(session({
+  secret: 'your-secret-key', // Секретный ключ для подписи сессий
+  resave: false,
+  saveUninitialized: true,
+}));
+
+// Вход в систему с сохранением данных в сессии
+app.post("/login", (req, res) => {
+    const { login, password } = req.body;
+
+    const query = "SELECT * FROM users WHERE login = ? AND password = ?";
+    db.query(query, [login, password], (err, results) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).send("Ошибка сервера");
+        }
+
+        if (results.length > 0) {
+            const user = results[0]; // Получаем данные пользователя
+            const profileImage = user.profile_image || 'default.jpg';
+
+            // Сохраняем данные пользователя в сессии
+            req.session.username = user.username;
+            req.session.login = user.login;
+            req.session.profileImage = profileImage;
+
+            // Перенаправляем на страницу профиля
+            res.redirect(`/profile.html?username=${user.username}&login=${user.login}&created_at=${user.created_at}&imageProfile=${profileImage}`);
+        } else {
+            res.send("Ошибка: Неверный логин или пароль!");
+        }
+    });
+});
+
+
+
+// Настроим Express для обслуживания статических файлов из папки uploads
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+app.get('/profile', (req, res) => {
+    // Получение данных из базы данных
+    const userId = req.query.userId; // например, из URL
+    connection.query('SELECT * FROM users WHERE id = ?', [userId], (err, results) => {
+      if (err) throw err;
+  
+      const user = results[0]; // Получаем первого пользователя (т.к. id уникален)
+      
+      // Подготовка данных для профиля
+      const profileData = {
+        username: user.username,
+        login: user.login,
+        created_at: user.created_at,
+        imageProfile: user.imageProfile || '/uploads/default.jpg' // Если нет изображения, подставляем дефолтное
+      };
+      
+      // Передача данных в шаблон (например, в профиль)
+      res.render('profile', profileData); // Если используете ejs или другой движок шаблонов
+    });
+  });
+  
+// Получение всех разделов с темами
+app.get('/api/sections', (req, res) => {
+  const query = `
+      SELECT sections.id AS section_id, sections.name AS section_name, 
+             topics.id AS topic_id, topics.title AS topic_title, 
+             topics.messages_count, topics.link 
+      FROM sections 
+      LEFT JOIN topics ON sections.id = topics.section_id 
+      ORDER BY sections.id, topics.id
+  `;
+
+  db.query(query, (err, results) => {
+      if (err) {
+          console.error(err);
+          return res.status(500).json({ error: 'Ошибка сервера' });
+      }
+
+      const sections = {};
+      results.forEach(row => {
+          if (!sections[row.section_id]) {
+              sections[row.section_id] = { name: row.section_name, topics: [] };
+          }
+          if (row.topic_id) {
+              sections[row.section_id].topics.push({
+                  title: row.topic_title,
+                  messages: row.messages_count,
+                  link: row.link
+              });
+          }
+      });
+
+      res.json(Object.values(sections));
+  });
+});
+
+// Обработка отправки сообщения
+app.post('/send-message', (req, res) => {
+  // Проверка на наличие данных в сессии
+  const { message } = req.body;
+  const username = req.session.username;
+
+  if (!username) {
+      return res.status(401).json({ error: 'Необходимо авторизоваться' });
+  }
+
+  // Проверка на пустое сообщение
+  if (!message) {
+      return res.status(400).json({ error: 'Сообщение не может быть пустым' });
+  }
+
+  // Добавление сообщения в базу данных
+  const query = "INSERT INTO forum_messages (username, message) VALUES (?, ?)";
+  db.query(query, [username, message], (err, result) => {
+      if (err) {
+          console.error(err);
+          return res.status(500).json({ error: 'Ошибка базы данных' });
+      }
+
+      res.status(200).json({ message: 'Сообщение отправлено успешно' });
+  });
+});
+
+app.get('/messages', (req, res) => {
+  const query = 'SELECT * FROM forum_messages ORDER BY created_at DESC';
+  db.query(query, (err, results) => {
+      if (err) {
+          console.error(err);
+          return res.status(500).json({ error: 'Ошибка базы данных' });
+      }
+
+      res.status(200).json(results);
+  });
+});
+
+
+// 🔹 Выход
+app.get("/logout", (req, res) => {
+  res.redirect("/login.html");
+});
+
+app.listen(PORT, () => {
+  console.log(`Сервер запущен на http://localhost:${PORT}`);
+});

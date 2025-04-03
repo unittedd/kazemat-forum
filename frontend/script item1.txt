@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Форум - Тема</title>
+    <link rel="stylesheet" href="item.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+</head>
+<body>
+
+  <!-- Закрепленный хэдер с меню -->
+  <header>
+    <img src="logo.svg" alt="Логотип" class="logo">
+    <div class="menu">
+      <a href="index.html">Главная</a>
+      <a href="forum.html" style="color: #00ffcc">Форум</a>
+      <a href="profile.html" class="profile-btn">Профиль</a>
+      <a href="/logout" class="logout">
+        Выйти <img src="icons/arrow.svg" class="logout-icon">
+      </a>
+    </div>
+  </header>
+
+  <main>
+    <!-- Заголовок темы -->
+    <h1 id="topicTitle"></h1>
+
+    <!-- Контейнер сообщений -->
+    <div class="messages" id="messagesContainer"></div>
+
+    <!-- Поле ввода сообщения -->
+    <div class="message-input mt-24px">
+        <!-- Иконка для прикрепления файлов -->
+        <img src="icons/skrepka.svg" id="attachmentIcon" alt="Прикрепить файл" style="width: 20px; height: 20px;">
+        <input type="text" id="messageInput" placeholder="Написать сообщение" required>
+
+        <!-- Иконка для отправки сообщения -->
+        <img src="icons/arrow-message.svg" alt="Arrow Message" id="sendMessageButton" style="width: 20px; height: 20px;">
+    </div>
+
+    <!-- Скрытый input для загрузки файлов -->
+    <input type="file" id="fileInput" accept=".png, .jpg, .jpeg" style="display: none;">
+
+    <!-- Блок для отображения изображения перед отправкой -->
+    <div id="imagePreview" style="display: none; margin-top: 10px;">
+        <img id="uploadedImage" src="" alt="Загруженное изображение" class="uploaded-image">
+    </div>
+
+  </main>
+
+  <!-- Подвал -->
+  <footer>
+      <div class="footer-container">
+        <img src="logo.svg" alt="Логотип" class="logo">
+        <a href="privacy.html" class="privacy-policy">Политика конфиденциальности</a>
+      </div>
+  </footer>
+
+
+  <script>
+    // Получаем название темы из параметра URL
+    function getTopicFromURL() {
+        const params = new URLSearchParams(window.location.search);
+        return params.get("topic") || "Неизвестная тема";
+    }
+
+    document.getElementById("topicTitle").innerText = getTopicFromURL();
+
+    // Проверка авторизации пользователя
+    const userData = JSON.parse(localStorage.getItem("userData"));
+    if (!userData || !userData.username) {
+        alert('Вы не авторизованы!');
+        window.location.href = '/login.html';
+    }
+
+    // Логика отправки сообщения при клике на стрелку
+    document.getElementById('sendMessageButton').addEventListener('click', () => {
+        const message = document.getElementById('messageInput').value.trim();  // Убираем лишние пробелы
+
+        // Проверка на пустое сообщение
+        if (message === '') {
+            alert('Сообщение не может быть пустым');
+            return;
+        }
+
+        // Добавление сообщения на страницу без обновления
+        const currentTime = new Date().toLocaleString();
+        addMessageToPage(userData.username, message, currentTime);
+
+        // Очистка поля ввода
+        document.getElementById('messageInput').value = '';
+
+        // Здесь ваш код для отправки сообщения через API или локально
+        console.log("Сообщение отправлено:", message);
+    });
+
+    // Функция добавления сообщения на страницу без обновления
+    function addMessageToPage(username, message, time) {
+        const messagesContainer = document.querySelector('.messages');
+
+        const messageElement = document.createElement('div');
+        messageElement.classList.add('message');
+
+        // Создаём HTML для сообщения
+        const messageHTML = `
+            <div class="avatar-container">
+                <img src="default-avatar.png" alt="Avatar">
+                <p class="username">${username}</p>
+            </div>
+            <div class="content">
+                <p class="text">${message}</p>
+            </div>
+            <div class="actions">
+                <span class="time">${time}</span>
+            </div>
+        `;
+
+        messageElement.innerHTML = messageHTML;
+
+        // Добавляем сообщение в контейнер
+        messagesContainer.appendChild(messageElement);
+    }
+
+    // Загружаем сообщения при открытии страницы
+    function loadMessages() {
+        fetch('/messages')
+            .then(response => response.json())
+            .then(messages => {
+                const messagesContainer = document.querySelector('.messages');
+                messagesContainer.innerHTML = ''; // Очистка перед добавлением новых
+
+                messages.forEach(message => {
+                    const messageElement = document.createElement('div');
+                    messageElement.classList.add('message');
+                    messageElement.innerHTML = `
+                        <img src="${message.profileImage}" alt="Avatar">
+                        <div class="content">
+                            <p class="text">${message.message}</p>
+                            <p class="username">${message.username}</p>
+                        </div>
+                        <div class="actions">
+                            <span>${message.created_at}</span>
+                        </div>
+                    `;
+                    messagesContainer.appendChild(messageElement);
+                });
+            })
+            .catch(error => console.error("Ошибка загрузки сообщений:", error));
+    }
+
+    // Загружаем сообщения при открытии страницы
+    window.onload = loadMessages;
+
+</script>
+
+</body>
+</html>
